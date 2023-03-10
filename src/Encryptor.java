@@ -32,6 +32,9 @@ public class Encryptor
      */
     public void fillBlock(String str)
     {
+        //a = row
+        //b=column
+        //c=index
         int index = 0;
         int currentRow=0;
         int currentCol=0;
@@ -43,13 +46,13 @@ public class Encryptor
                     index++;
                 }
                 else{
-                    letterBlock[currentRow][currentCol]=str.charAt(index);
+                    letterBlock[currentRow][currentCol]=""+ str.charAt(index);
                     currentCol++;
                     index++;
                 }
             }
             currentRow++;
-            currentCol++;
+            currentCol=0;
         }
     }
     /** Extracts encrypted string from letterBlock in column-major order.
@@ -58,20 +61,38 @@ public class Encryptor
      *
      *   @return the encrypted string from letterBlock
      */
+
     public String encryptBlock()
     {
-        return null;
+        String encrypted = "";
+        for(int i=0;i<letterBlock[0].length;i++){
+            for(int j=0;j<letterBlock.length;j++){
+                encrypted+=letterBlock[j][i];
+            }
+        }
+        return encrypted;
     }
 
-    /** Encrypts a message.
-     *
-     *  @param message the string to be encrypted
-     *
-     *  @return the encrypted message; if message is the empty string, returns the empty string
-     */
+
     public String encryptMessage(String message)
     {
-        return null;
+        String result = "";
+        String temp = message;
+        int length = numRows*numCols;
+        int now = 0;
+        for(int i=0;i<message.length()-1;i++){
+            if(now!=length){
+                Encryptor e = new Encryptor(numRows,numCols);
+                e.fillBlock(temp);
+                result+=e.encryptBlock();
+            }
+            else {
+                now=0;
+                temp = temp.substring(length);
+            }
+            now+=length;
+        }
+        return result;
     }
 
     /**  Decrypts an encrypted message. All filler 'A's that may have been
