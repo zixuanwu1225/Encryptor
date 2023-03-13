@@ -76,23 +76,27 @@ public class Encryptor
 
     public String encryptMessage(String message)
     {
-        String result = "";
-        String temp = message;
-        int length = numRows*numCols;
-        int now = 0;
-        for(int i=0;i<message.length()-1;i++){
-            if(now!=length){
-                Encryptor e = new Encryptor(numRows,numCols);
-                e.fillBlock(temp);
-                result+=e.encryptBlock();
+        letterBlock = new String[numRows][numCols];
+        String encrypted = "";
+        int limit=0;
+        for (int i = 0; i < message.length(); i = limit) {
+            if (message.length() < (numRows * numCols)) {
+                fillBlock(message);
+                return encryptBlock();
+            } else {
+                if (limit + (numRows * numCols) > message.length()){
+                    limit = message.length();
+                }
+                else {
+                    limit += (numRows * numCols);
+                }
+                fillBlock(message.substring(i, limit));
+                encrypted += encryptBlock();
+                letterBlock = new String[numRows][numCols];
             }
-            else {
-                now=0;
-                temp = temp.substring(length);
-            }
-            now+=length;
         }
-        return result;
+
+        return encrypted;
     }
 
     /**  Decrypts an encrypted message. All filler 'A's that may have been
@@ -119,6 +123,30 @@ public class Encryptor
      */
     public String decryptMessage(String encryptedMessage)
     {
-        return null;
+        letterBlock = new String[numCols][numRows];
+        String encrypted = "";
+        int limit=0;
+        for (int i = 0; i < encryptedMessage.length(); i = limit) {
+            if (encryptedMessage.length() < (numCols * numRows)) {
+                fillBlock(encryptedMessage);
+                return encryptBlock();
+            } else {
+                if (limit + (numRows * numCols) > encryptedMessage.length()){
+                    limit = encryptedMessage.length();
+                }
+                else {
+                    limit += (numRows * numCols);
+                }
+                fillBlock(encryptedMessage.substring(i, limit));
+                encrypted += encryptBlock();
+                letterBlock = new String[numCols][numRows];
+            }
+        }
+        int index  = encrypted.length()-1;
+        while(encrypted.charAt(index)=='A'){
+            encrypted=encrypted.substring(0,index);
+            index = encrypted.length()-1;
+        }
+        return encrypted;
     }
 }
